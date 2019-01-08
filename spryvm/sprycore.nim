@@ -381,3 +381,31 @@ proc addCore*(spry: Interpreter) =
       result = blk1.evalDo(spry)
       if spry.currentActivation.returned:
         return
+
+  nimMeth("keys:"):
+    let map = Map(evalArgInfix(spry))
+    let blk = Blok(evalArg(spry))
+    let current = spry.currentActivation
+    # Ugly hack for now, we trick the activation into holding
+    # each in pos 0
+    let orig = current.body.nodes[0]
+    let oldpos = current.pos
+    current.pos = 0
+    # We create and reuse a single activation
+    let activation = newActivation(blk)
+    for each in map.bindings.keys:
+      current.body.nodes[0] = each
+      # evalDo will increase pos, but we set it back below
+      result = activation.eval(spry)
+      activation.reset()
+      # Or else non local returns don't work :)
+      if current.returned:
+        # Reset our trick
+        current.body.nodes[0] = orig
+        current.pos = oldpos
+        return
+      current.pos = 0
+    # Reset our trick
+    current.body.nodes[0] = orig
+    current.pos = oldpos
+    return blk
