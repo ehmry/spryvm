@@ -1162,10 +1162,10 @@ method `eq`*(a: Blok, b: Node): Node {.inline.} =
 method `eq`*(a: Word, b: Node): Node {.inline.} =
   newValue(b of Word and (a.word == Word(b).word))
 
-method `eq`*(a, b: UndefVal): Node {.inline.} = TrueVal()
 method `eq`*(a: Node, b: UndefVal): Node {.inline.} = FalseVal()
-method `eq`*(a, b: NilVal): Node {.inline.} = TrueVal()
 method `eq`*(a: Node, b: NilVal): Node {.inline.} = FalseVal()
+method `eq`*(a, b: UndefVal): Node {.inline.} = TrueVal()
+method `eq`*(a, b: NilVal): Node {.inline.} = TrueVal()
 
 
 method `&`*(a: Node, b: Node): Node {.inline,base.} =
